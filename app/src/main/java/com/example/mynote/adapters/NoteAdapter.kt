@@ -2,62 +2,67 @@ package com.example.mynote.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mynote.R
+import com.example.mynote.databinding.NoteRecyclerviewItemBinding
 import com.example.mynote.modelClass.Note
 
 class NoteAdapter(
     val context: Context,
     val noteClickInterface: NoteClickInterface,
     val noteClickDeleteInterface: NoteClickDeleteInterface
-    ): RecyclerView.Adapter<NoteAdapter.ViewHolder> (){
+) : ListAdapter<Note, NoteAdapter.NoteViewHolder>(NoteDiffCallBack()) {
 
     private val allNotes = ArrayList<Note>()
 
-        inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-            val noteTextView = itemView.findViewById<TextView>(R.id.noteTitle)
-            val timeTextView = itemView.findViewById<TextView>(R.id.timeTextView)
-            val deleteButton = itemView.findViewById<ImageView>(R.id.deleteButton)
+    inner class NoteViewHolder(binding: NoteRecyclerviewItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        val titleTextView = binding.noteTitle
+        val timeTextView = binding.timeTextView
+        val deleteButton = binding.deleteButton
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
+        val binding =
+            NoteRecyclerviewItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val noteViewHolder = NoteViewHolder(binding)
+
+        binding.deleteButton.setOnClickListener {
+            if (noteViewHolder.adapterPosition != RecyclerView.NO_POSITION) {
+                noteClickDeleteInterface.onDeleteIconClick(getItem(noteViewHolder.adapterPosition))
+            }
         }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.note_recyclerview_item, parent,false)
-        return ViewHolder(itemView)
+        noteViewHolder.itemView.setOnClickListener {
+            if (noteViewHolder.adapterPosition != RecyclerView.NO_POSITION) {
+                noteClickInterface.onNoteClick(getItem(noteViewHolder.adapterPosition))
+            }
+        }
+        return noteViewHolder
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.noteTextView.setText(allNotes.get(position).noteTitle)
-        holder.timeTextView.setText(allNotes.get(position).timeStamp)
+    override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
+        holder.titleTextView.setText(getItem(position).noteTitle)
+        holder.timeTextView.setText(getItem(position).timeStamp)
+    }
 
-        holder.deleteButton.setOnClickListener{
-            noteClickDeleteInterface.onDeleteIconClick(allNotes.get(position))
+    interface NoteClickDeleteInterface {
+        fun onDeleteIconClick(note: Note)
+    }
+
+    interface NoteClickInterface {
+        fun onNoteClick(note: Note)
+    }
+
+    private class NoteDiffCallBack : DiffUtil.ItemCallback<Note>() {
+        override fun areItemsTheSame(oldItem: Note, newItem: Note): Boolean {
+            return oldItem.id == newItem.id
         }
 
-        holder.itemView.setOnClickListener{
-            noteClickInterface.onNoteClick(allNotes.get(position))
+        override fun areContentsTheSame(oldItem: Note, newItem: Note): Boolean {
+            return oldItem == newItem
         }
     }
-
-    override fun getItemCount(): Int {
-        return allNotes.size
-    }
-
-    fun updateList(newList: List<Note>){
-        allNotes.clear()
-        allNotes.addAll(newList)
-        notifyDataSetChanged()
-    }
-}
-
-interface NoteClickDeleteInterface{
-    fun onDeleteIconClick(note: Note)
-}
-
-interface NoteClickInterface{
-    fun onNoteClick(note: Note)
 }

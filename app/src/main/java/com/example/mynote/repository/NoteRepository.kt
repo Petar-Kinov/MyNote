@@ -3,10 +3,11 @@ package com.example.mynote.repository
 import androidx.lifecycle.LiveData
 import com.example.mynote.database.NotesDao
 import com.example.mynote.modelClass.Note
+import kotlinx.coroutines.flow.Flow
 
 class NoteRepository(private val notesDao: NotesDao) {
 
-    val allnotes: LiveData<List<Note>> = notesDao.getAllNotes()
+    val allNotes: Flow<List<Note>> = notesDao.getAllNotes()
 
     suspend fun insert(note: Note){
         notesDao.insert(note)

@@ -3,6 +3,7 @@ package com.example.mynote.database
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.example.mynote.modelClass.Note
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NotesDao {
@@ -17,6 +18,5 @@ interface NotesDao {
     suspend fun delete(note: Note)
 
    @Query("SELECT * FROM notesTable order by id ASC")
-   fun getAllNotes(): LiveData<List<Note>>
-
+    fun getAllNotes(): Flow<List<Note>>
 }

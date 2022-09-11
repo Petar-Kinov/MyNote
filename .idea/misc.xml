@@ -4,8 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Programing/2022_Kotlin/MyNote/app/src/main/res/drawable/custom_button_background.xml" value="0.23" />
-        <entry key="..\:/Programing/2022_Kotlin/MyNote/app/src/main/res/layout/activity_add_edit_note.xml" value="0.33" />
+        <entry key="..\:/Programing/2022_Kotlin/MyNote/app/src/main/res/layout/activity_add_edit_note.xml" value="0.25" />
         <entry key="..\:/Programing/2022_Kotlin/MyNote/app/src/main/res/layout/activity_main.xml" value="0.2994791666666667" />
+        <entry key="..\:/Programing/2022_Kotlin/MyNote/app/src/main/res/layout/fragment_note_detail.xml" value="0.5416666666666666" />
+        <entry key="..\:/Programing/2022_Kotlin/MyNote/app/src/main/res/layout/fragment_note_list.xml" value="0.5416666666666666" />
         <entry key="..\:/Programing/2022_Kotlin/MyNote/app/src/main/res/layout/note_recyclerview_item.xml" value="0.2994791666666667" />
       </map>
     </option>

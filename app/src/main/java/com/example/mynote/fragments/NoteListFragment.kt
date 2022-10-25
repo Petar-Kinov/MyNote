@@ -1,11 +1,15 @@
 package com.example.mynote.fragments
 
+import android.R
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -17,6 +21,8 @@ import com.example.mynote.databinding.FragmentNoteListBinding
 import com.example.mynote.modelClass.Note
 import com.example.mynote.viewModel.NoteViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlin.system.exitProcess
+
 
 class NoteListFragment : Fragment(),
     NoteAdapter.NoteClickInterface,
@@ -58,6 +64,21 @@ class NoteListFragment : Fragment(),
             val action = NoteListFragmentDirections.actionNoteListFragmentToNoteDetailFragment(noteType = Constants.MyConstants.ADD,null,null,-1 )
             it.findNavController().navigate(action)
         }
+
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                AlertDialog.Builder(requireContext())
+                    .setIcon(R.drawable.ic_dialog_alert)
+                    .setTitle("Closing Activity")
+                    .setMessage("Are you sure you want to close this activity?")
+                    .setPositiveButton("Yes",
+                        DialogInterface.OnClickListener { dialog, which -> exitProcess(0) })
+                    .setNegativeButton("No", null)
+                    .show()
+            }
+
+        })
 
     }
 

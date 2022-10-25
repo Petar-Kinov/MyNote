@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -74,6 +75,14 @@ class NoteDetailFragment : Fragment() {
         addUpdateButton.setOnClickListener{
             addUpdateNote()
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val action = NoteDetailFragmentDirections.actionNoteDetailFragmentToNoteListFragment()
+                binding.root.findNavController().navigate(action)
+            }
+
+        })
     }
 
     override fun onDestroy() {
@@ -105,5 +114,7 @@ class NoteDetailFragment : Fragment() {
         val action = NoteDetailFragmentDirections.actionNoteDetailFragmentToNoteListFragment()
         binding.root.findNavController().navigate(action)
     }
+
+
 
 }

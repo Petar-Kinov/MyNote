@@ -1,6 +1,5 @@
 package com.example.mynote.adapters
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -10,50 +9,42 @@ import com.example.mynote.databinding.NoteRecyclerviewItemBinding
 import com.example.mynote.modelClass.Note
 
 class NoteAdapter(
-    val context: Context,
-    val noteClickInterface: NoteClickInterface,
-    val noteClickDeleteInterface: NoteClickDeleteInterface
+    val noteClickInterface: (note: Note) -> Unit,
+    val noteClickDeleteInterface: (note: Note) -> Unit,
 ) : ListAdapter<Note, NoteAdapter.NoteViewHolder>(NoteDiffCallBack()) {
 
-    private val allNotes = ArrayList<Note>()
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
+        val binding = NoteRecyclerviewItemBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
 
-    inner class NoteViewHolder(binding: NoteRecyclerviewItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        val titleTextView = binding.noteTitle
-        val timeTextView = binding.timeTextView
-        val deleteButton = binding.deleteButton
+        return NoteViewHolder(binding)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
-        val binding =
-            NoteRecyclerviewItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        val noteViewHolder = NoteViewHolder(binding)
+    inner class NoteViewHolder(private val binding: NoteRecyclerviewItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
-        binding.deleteButton.setOnClickListener {
-            if (noteViewHolder.adapterPosition != RecyclerView.NO_POSITION) {
-                noteClickDeleteInterface.onDeleteIconClick(getItem(noteViewHolder.adapterPosition))
+        fun bind() {
+            binding.noteTitle.text = getItem(position).noteTitle
+
+            binding.deleteButton.setOnClickListener {
+                if (adapterPosition != RecyclerView.NO_POSITION) {
+                    noteClickDeleteInterface(getItem(adapterPosition))
+                }
+            }
+
+            binding.root.setOnClickListener {
+                if (adapterPosition != RecyclerView.NO_POSITION) {
+                    noteClickInterface(getItem(adapterPosition))
+                }
             }
         }
-
-        noteViewHolder.itemView.setOnClickListener {
-            if (noteViewHolder.adapterPosition != RecyclerView.NO_POSITION) {
-                noteClickInterface.onNoteClick(getItem(noteViewHolder.adapterPosition))
-            }
-        }
-        return noteViewHolder
     }
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
-        holder.titleTextView.setText(getItem(position).noteTitle)
-        holder.timeTextView.setText(getItem(position).timeStamp)
-    }
-
-    interface NoteClickDeleteInterface {
-        fun onDeleteIconClick(note: Note)
-    }
-
-    interface NoteClickInterface {
-        fun onNoteClick(note: Note)
+        holder.bind()
     }
 
     private class NoteDiffCallBack : DiffUtil.ItemCallback<Note>() {

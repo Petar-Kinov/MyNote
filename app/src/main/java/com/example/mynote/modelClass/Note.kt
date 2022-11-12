@@ -6,11 +6,17 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "notesTable")
 class Note(
-    @ColumnInfo(name = "title") val noteTitle: String,
-    @ColumnInfo(name = "description") val noteDescription: String,
-    @ColumnInfo(name = "timeStamp") val timeStamp: String
+    @ColumnInfo(name = "title")
+    val noteTitle: String,
+
+    @ColumnInfo(name = "description")
+    val noteDescription: String,
+
+    @ColumnInfo(name = "timeStamp")
+    val timeStamp: String
 ) {
-    @PrimaryKey(autoGenerate = true) var id = 0
+    @PrimaryKey(autoGenerate = true)
+    var id = 0
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

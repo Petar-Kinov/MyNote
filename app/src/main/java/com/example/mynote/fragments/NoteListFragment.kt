@@ -4,6 +4,7 @@ import android.R
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.provider.SyncStateContract
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +17,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mynote.adapters.NoteAdapter
-import com.example.mynote.constants.Constants
+import com.example.mynote.constants.ADD
+import com.example.mynote.constants.EDIT
 import com.example.mynote.databinding.FragmentNoteListBinding
 import com.example.mynote.modelClass.Note
 import com.example.mynote.viewModel.NoteViewModel
@@ -24,9 +26,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlin.system.exitProcess
 
 
-class NoteListFragment : Fragment(),
-    NoteAdapter.NoteClickInterface,
-    NoteAdapter.NoteClickDeleteInterface {
+class NoteListFragment : Fragment()
+//class NoteListFragment : Fragment(),
+//    NoteAdapter.NoteClickInterface,
+//    NoteAdapter.NoteClickDeleteInterface
+{
     private var _binding: FragmentNoteListBinding? = null
     private val binding get()= _binding!!
 
@@ -53,7 +57,7 @@ class NoteListFragment : Fragment(),
 
         viewModel = ViewModelProvider(this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)).get(NoteViewModel::class.java)
-        val noteRecyclerAdapter = NoteAdapter(requireContext(),this,this)
+        val noteRecyclerAdapter = NoteAdapter(noteClickInterface = noteClickInterface, noteClickDeleteInterface = noteClickDeleteInterface)
         recyclerView.adapter = noteRecyclerAdapter
 
         viewModel.allNotes.observe(viewLifecycleOwner) { list ->
@@ -61,7 +65,7 @@ class NoteListFragment : Fragment(),
         }
 
         addFAB.setOnClickListener{
-            val action = NoteListFragmentDirections.actionNoteListFragmentToNoteDetailFragment(noteType = Constants.MyConstants.ADD,null,null,-1 )
+            val action = NoteListFragmentDirections.actionNoteListFragmentToNoteDetailFragment(noteType = ADD,null,null,-1 )
             it.findNavController().navigate(action)
         }
 
@@ -81,14 +85,13 @@ class NoteListFragment : Fragment(),
         })
 
     }
-
-    override fun onDeleteIconClick(note: Note) {
+    private val noteClickDeleteInterface: (note: Note) -> Unit = { note ->
         viewModel.deleteNote(note)
         Toast.makeText(requireContext(),"${note.noteTitle} Deleted", Toast.LENGTH_LONG).show()
     }
 
-    override fun onNoteClick(note: Note) {
-        val action = NoteListFragmentDirections.actionNoteListFragmentToNoteDetailFragment(Constants.MyConstants.EDIT,note.noteTitle,note.noteDescription,note.id)
+    private val noteClickInterface: (note: Note) -> Unit = { note ->
+        val action = NoteListFragmentDirections.actionNoteListFragmentToNoteDetailFragment(EDIT,note.noteTitle,note.noteDescription,note.id)
         this.findNavController().navigate(action)
     }
 
